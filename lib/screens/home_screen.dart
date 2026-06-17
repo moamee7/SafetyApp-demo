@@ -1,6 +1,7 @@
 // lib/screens/home_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:youth_safety_app/services/location_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -10,6 +11,24 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  // Location text to show on screen
+  String _locationText = 'Getting location...';
+
+  @override
+  void initState() {
+    super.initState();
+    // Get location when screen opens
+    _getLocation();
+  }
+
+  // Get current location
+  Future<void> _getLocation() async {
+    String location = await LocationService.getLocationText();
+    setState(() {
+      _locationText = location;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,12 +94,65 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
 
-            const SizedBox(height: 40),
+            const SizedBox(height: 16),
+
+            // Location Card
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.2),
+                    blurRadius: 10,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.location_on,
+                    color: Color(0xFFE53935),
+                    size: 30,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Current Location',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        Text(
+                          _locationText,
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.refresh),
+                    onPressed: _getLocation,
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 30),
 
             // SOS Button
             GestureDetector(
               onTap: () {
-                // SOS action will be added later
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('SOS Activated! Sending help...'),
@@ -153,14 +225,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
 
                 // Journey Timer Button
-_featureButton(
-  icon: Icons.timer,
-  label: 'Journey Timer',
-  color: Colors.purple,
-  onTap: () {
-    Navigator.pushNamed(context, '/journey');
-  },
-),
+                _featureButton(
+                  icon: Icons.timer,
+                  label: 'Journey Timer',
+                  color: Colors.purple,
+                  onTap: () {
+                    Navigator.pushNamed(context, '/journey');
+                  },
+                ),
 
                 // Call 112 Button
                 _featureButton(
