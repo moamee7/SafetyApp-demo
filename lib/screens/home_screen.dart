@@ -25,11 +25,16 @@ class _HomeScreenState extends State<HomeScreen> {
     _startShakeDetection();
   }
 
-  // Start shake detection
+  Future<void> _getLocation() async {
+    String location = await LocationService.getLocationText();
+    setState(() {
+      _locationText = location;
+    });
+  }
+
   void _startShakeDetection() {
     ShakeService.startListening(
       onShake: () {
-        // Show SOS triggered message
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('🚨 Shake detected! SOS Activated!'),
@@ -37,7 +42,6 @@ class _HomeScreenState extends State<HomeScreen> {
             duration: Duration(seconds: 3),
           ),
         );
-        // Send SOS SMS
         SmsService.sendSOSSms();
       },
     );
@@ -47,13 +51,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     ShakeService.stopListening();
     super.dispose();
-  }
-
-  Future<void> _getLocation() async {
-    String location = await LocationService.getLocationText();
-    setState(() {
-      _locationText = location;
-    });
   }
 
   @override
@@ -232,24 +229,24 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisSpacing: 16,
               children: [
                 // Panic Alarm Button
-_featureButton(
-  icon: _isAlarmPlaying ? Icons.volume_off : Icons.volume_up,
-  label: _isAlarmPlaying ? 'Stop Alarm' : 'Panic Alarm',
-  color: Colors.orange,
-  onTap: () async {
-    if (_isAlarmPlaying) {
-      await AlarmService.stopAlarm();
-      setState(() {
-        _isAlarmPlaying = false;
-      });
-    } else {
-      await AlarmService.playAlarm();
-      setState(() {
-        _isAlarmPlaying = true;
-      });
-    }
-  },
-),
+                _featureButton(
+                  icon: _isAlarmPlaying ? Icons.volume_off : Icons.volume_up,
+                  label: _isAlarmPlaying ? 'Stop Alarm' : 'Panic Alarm',
+                  color: Colors.orange,
+                  onTap: () async {
+                    if (_isAlarmPlaying) {
+                      await AlarmService.stopAlarm();
+                      setState(() {
+                        _isAlarmPlaying = false;
+                      });
+                    } else {
+                      await AlarmService.playAlarm();
+                      setState(() {
+                        _isAlarmPlaying = true;
+                      });
+                    }
+                  },
+                ),
 
                 // Emergency Contacts Button
                 _featureButton(
