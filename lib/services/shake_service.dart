@@ -8,9 +8,9 @@ class ShakeService {
   // Start listening for shake
   static void startListening({required Function onShake}) {
     _detector = ShakeDetector.autoStart(
-      onPhoneShake: () {
-        onShake();
-      },
+      onPhoneShake: (event) {
+      onShake();
+},
       shakeThresholdGravity: 2.7,
       shakeSlopTimeMS: 500,
       shakeCountResetTime: 3000,

@@ -1,11 +1,14 @@
 // lib/screens/home_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:youth_safety_app/services/location_service.dart';
-import 'package:youth_safety_app/services/sms_service.dart';
 import 'package:youth_safety_app/services/call_service.dart';
 import 'package:youth_safety_app/services/alarm_service.dart';
 import 'package:youth_safety_app/services/shake_service.dart';
+import 'package:youth_safety_app/providers/auth_provider.dart';
+import 'package:youth_safety_app/providers/sos_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -42,9 +45,39 @@ class _HomeScreenState extends State<HomeScreen> {
             duration: Duration(seconds: 3),
           ),
         );
-        SmsService.sendSOSSms();
+        _triggerSOS();
       },
     );
+  }
+
+  Future<void> _triggerSOS() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final sosProvider = Provider.of<SosProvider>(context, listen: false);
+    final uid = authProvider.currentUser?.uid;
+
+    if (uid == null) return;
+
+    final success = await sosProvider.triggerSOS(uid);
+
+    if (!mounted) return;
+    if (!success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(sosProvider.errorMessage ?? 'Failed to send SOS'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _onSosButtonTap() async {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('SOS Activated! Sending help...'),
+        backgroundColor: Colors.red,
+      ),
+    );
+    await _triggerSOS();
   }
 
   @override
@@ -69,7 +102,9 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.person, color: Colors.white),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, '/profile');
+            },
           ),
         ],
       ),
@@ -126,7 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
+                    color: Colors.grey.withValues(alpha: 0.2),
                     blurRadius: 10,
                     spreadRadius: 2,
                   ),
@@ -173,15 +208,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
             // SOS Button
             GestureDetector(
-              onTap: () async {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('SOS Activated! Sending help...'),
-                    backgroundColor: Colors.red,
-                  ),
-                );
-                await SmsService.sendSOSSms();
-              },
+              onTap: _onSosButtonTap,
               child: Container(
                 width: 200,
                 height: 200,
@@ -190,7 +217,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.red.withOpacity(0.4),
+                      color: Colors.red.withValues(alpha: 0.4),
                       blurRadius: 30,
                       spreadRadius: 10,
                     ),
@@ -277,6 +304,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     await CallService.callEmergency();
                   },
                 ),
+
+                // SOS History Button
+                _featureButton(
+                  icon: Icons.history,
+                  label: 'SOS History',
+                  color: Colors.redAccent,
+                  onTap: () {
+                    Navigator.pushNamed(context, '/sos-history');
+                  },
+                ),
               ],
             ),
 
@@ -301,7 +338,7 @@ class _HomeScreenState extends State<HomeScreen> {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
+              color: Colors.grey.withValues(alpha: 0.2),
               blurRadius: 10,
               spreadRadius: 2,
             ),
@@ -313,7 +350,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: color, size: 40),
