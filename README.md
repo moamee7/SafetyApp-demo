@@ -1,17 +1,30 @@
-# youth_safety
+# 🛡️ Youth Safety App
 
-A new Flutter project.
+A mobile safety application built for students and young professionals (16-25 years) that provides emergency assistance during unsafe situations.
 
-## Getting Started
+## 👥 Team
+- **Pradnya Bodke** - Frontend Developer (Flutter UI, Device Features)
+- **Nikita Narevkar** - Backend Developer (Firebase, Database)
 
-This project is a starting point for a Flutter application.
+## 📱 Features
+- 🆘 One-tap SOS Button
+- 📍 Real-time Location Sharing
+- 📱 Emergency SMS with Location Link
+- 📞 Direct Call to 112
+- 🔔 Panic Alarm
+- 📳 Shake to Trigger SOS
+- ⏱️ Journey Timer (Safe Walk)
+- 👥 Emergency Contacts Management
+- 🔐 Firebase Authentication
 
-A few resources to get you started if this is your first Flutter project:
+## 🛠️ Tech Stack
+- **Frontend:** Flutter (Dart)
+- **Backend:** Firebase
+- **Database:** Cloud Firestore
+- **Authentication:** Firebase Auth
+- **Version Control:** GitHub
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 🚀 How To Run
+1. Clone the repository
+2. Run `flutter pub get`
+3. Run `flutter run`
